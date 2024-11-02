@@ -1,28 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { PondService } from '../services/pond.service';
 import { Pond, Sensor } from '../models/pond.model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pond-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './pond-list.component.html',
   styleUrls: ['./pond-list.component.css'],
+  providers: [DatePipe] // Add DatePipe as a provider here
 })
 export class PondListComponent implements OnInit {
   ponds: Pond[] = [];
   sensors: Sensor[] = [];
   selectedPondId: string = '';
   newPond: Pond = { id: '', name: '', location: '', sensors: [] };
-  newSensor: Sensor = { type: '', value: '' };
+  newSensor: Sensor = { type: '', readings: [] };
   showAddPondForm: boolean = false;
   showEditPondForm: boolean = false;
   selectedPond: Pond = { id: '', name: '', location: '', sensors: [] };
-  sensorView: boolean = false;  // Track whether we are in sensor view
+  sensorView: boolean = false; // Track whether we are in sensor view
 
-  constructor(private pondService: PondService) {}
+  constructor(private pondService: PondService, private datePipe: DatePipe) {}
 
   ngOnInit(): void {
     this.loadPonds();
@@ -36,14 +37,31 @@ export class PondListComponent implements OnInit {
 
   viewSensors(pondId: string): void {
     this.selectedPondId = pondId;
-    this.sensorView = true;  // Switch to sensor view
+    this.sensorView = true; // Switch to sensor view
     this.pondService.getSensorsByPond(pondId).subscribe((data) => {
       this.sensors = data;
+      // Extract the most recent reading for each sensor
+      this.sensors.forEach(sensor => {
+        sensor.mostRecentReading = sensor.readings.length > 0
+          ? sensor.readings.reduce((latest, current) => new Date(latest.timestamp) > new Date(current.timestamp) ? latest : current)
+          : undefined;
+        // Convert timestamps to local time zone for display
+        if (sensor.mostRecentReading) {
+          sensor.mostRecentReading.timestamp = this.formatTimestampToLocalTime(sensor.mostRecentReading.timestamp);
+        }
+      });
     });
   }
 
+  formatTimestampToLocalTime(utcTimestamp: string): string {
+    const utcDate = new Date(utcTimestamp);
+    // Using DatePipe to format the date to IST with explicit time zone offset
+    return this.datePipe.transform(utcDate, 'dd-MM-yyyy HH:mm:ss', 'Asia/Kolkata') || '';
+  }
+  
+
   backToPonds(): void {
-    this.sensorView = false;  // Switch back to pond list view
+    this.sensorView = false; // Switch back to pond list view
     this.selectedPondId = ''; // Clear selected pond ID
   }
 
@@ -51,25 +69,25 @@ export class PondListComponent implements OnInit {
     this.showAddPondForm = !this.showAddPondForm;
     if (!this.showAddPondForm) {
       this.newPond = { id: '', name: '', location: '', sensors: [] };
-      this.newSensor = { type: '', value: '' };
+      this.newSensor = { type: '', readings: [] };
     }
   }
 
   addSensor(): void {
-    if (this.newSensor.type && this.newSensor.value) {
+    if (this.newSensor.type) {
       this.newPond.sensors.push({ ...this.newSensor });
-      this.newSensor = { type: '', value: '' };
+      this.newSensor = { type: '', readings: [] };
     }
   }
 
   addPond(): void {
     if (this.newPond.id && this.newPond.name) {
       const defaultSensors: Sensor[] = [
-        { type: 'pH Sensor', value: '7.0' },
-        { type: 'Temperature Sensor', value: '25°C' },
-        { type: 'Rain Sensor', value: 'No Rain' },
-        { type: 'Oxygen Sensor', value: '8 mg/L' },
-        { type: 'Water Level Sensor', value: 'Normal' }
+        { type: 'pH Sensor', readings: [{ value: '7.0', timestamp: new Date().toISOString() }] },
+        { type: 'Temperature Sensor', readings: [{ value: '25°C', timestamp: new Date().toISOString() }] },
+        { type: 'Rain Sensor', readings: [{ value: 'No Rain', timestamp: new Date().toISOString() }] },
+        { type: 'Oxygen Sensor', readings: [{ value: '8 mg/L', timestamp: new Date().toISOString() }] },
+        { type: 'Water Level Sensor', readings: [{ value: 'Normal', timestamp: new Date().toISOString() }] }
       ];
       this.newPond.sensors = [...this.newPond.sensors, ...defaultSensors];
       this.pondService.addPond(this.newPond).subscribe((pond) => {

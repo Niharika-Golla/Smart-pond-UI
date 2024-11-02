@@ -11,10 +11,10 @@
             {{ sensor.type }}
           </h6>
           <p class="sensor-optimum">Optimum: {{ getOptimumValue(sensor.type) }}</p>
-          <p class="sensor-value">Value: {{ sensor.value }}</p>
+          <p *ngIf="sensor.mostRecentReading">Value: {{ sensor.mostRecentReading.value }} at {{ sensor.mostRecentReading.timestamp }}</p>
           <!-- Error message if value is outside the optimum range -->
-          <p *ngIf="isOutOfRange(sensor.type, sensor.value)" class="sensor-error" style="color: red; font-weight: bold;">
-            {{ getAlertMessage(sensor.type, sensor.value) }}
+          <p *ngIf="sensor.mostRecentReading && isOutOfRange(sensor.type, sensor.mostRecentReading.value)" class="sensor-error" style="color: red; font-weight: bold;">
+            {{ getAlertMessage(sensor.type, sensor.mostRecentReading.value) }}
           </p>
           <!-- View Historical Data Button -->
           <button class="btn btn-info" (click)="backToPonds()">View Historical Data</button>
@@ -126,13 +126,13 @@
         </div>
         <div class="form-group">
           <label for="editPondLocation">Pond Location</label>
-            <input
-              type="text"
-              id="editPondLocation"
-              class="form-control"
-              [(ngModel)]="selectedPond.location"
-              placeholder="Enter pond location"
-            />
+          <input
+            type="text"
+            id="editPondLocation"
+            class="form-control"
+            [(ngModel)]="selectedPond.location"
+            placeholder="Enter pond location"
+          />
         </div>
         <div class="button-group">
           <button class="btn btn-primary" (click)="updatePond()">Update Pond</button>

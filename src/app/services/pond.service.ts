@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Pond, Sensor } from '../models/pond.model';
+import { Pond } from '../models/pond.model';
+import { Sensor } from '../models/sensor.model';
 
 @Injectable({
   providedIn: 'root',
