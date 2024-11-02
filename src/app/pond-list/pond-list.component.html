@@ -1,4 +1,3 @@
-<!-- pond-list.component.html -->
 <div class="container-fluid">
   <!-- Show Sensor View if sensorView is true -->
   <div *ngIf="sensorView">
@@ -35,7 +34,12 @@
           alt="Pond Image"
         />
         <div class="card-body">
-          <h5 class="card-title">{{ pond.name }}</h5>
+          <h5 class="card-title">{{ pond.name }}
+            <!-- Edit Button at the Top Right Corner -->
+            <button class="btn btn-sm btn-outline-secondary float-end" (click)="editPond(pond)">
+              <i class="bi bi-pencil"></i>
+            </button>
+          </h5>
           <p class="card-text">Pond ID: {{ pond.id }}</p>
           <p class="card-text">
             <i class="bi bi-geo-alt-fill"></i> <!-- Location symbol -->
@@ -91,6 +95,49 @@
         <div class="button-group">
           <button class="btn btn-primary" (click)="addPond()">Save Pond</button>
           <button class="btn btn-danger" (click)="toggleAddPondForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Pond Form, similar to Add Pond Form -->
+    <div *ngIf="showEditPondForm" class="add-pond-form-overlay">
+      <div class="add-pond-form-container">
+        <h3 class="add-pond-form-title">Edit Pond</h3>
+        <div class="form-group">
+          <label for="editPondId">Pond ID</label>
+          <input
+            type="text"
+            id="editPondId"
+            class="form-control"
+            [(ngModel)]="selectedPond.id"
+            placeholder="Enter pond ID"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label for="editPondName">Pond Name</label>
+          <input
+            type="text"
+            id="editPondName"
+            class="form-control"
+            [(ngModel)]="selectedPond.name"
+            placeholder="Enter pond name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="editPondLocation">Pond Location</label>
+            <input
+              type="text"
+              id="editPondLocation"
+              class="form-control"
+              [(ngModel)]="selectedPond.location"
+              placeholder="Enter pond location"
+            />
+        </div>
+        <div class="button-group">
+          <button class="btn btn-primary" (click)="updatePond()">Update Pond</button>
+          <button class="btn btn-danger" (click)="deletePond(selectedPond.id)">Delete Pond</button>
+          <button class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
         </div>
       </div>
     </div>

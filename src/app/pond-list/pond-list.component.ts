@@ -18,6 +18,8 @@ export class PondListComponent implements OnInit {
   newPond: Pond = { id: '', name: '', location: '', sensors: [] };
   newSensor: Sensor = { type: '', value: '' };
   showAddPondForm: boolean = false;
+  showEditPondForm: boolean = false;
+  selectedPond: Pond = { id: '', name: '', location: '', sensors: [] };
   sensorView: boolean = false;  // Track whether we are in sensor view
 
   constructor(private pondService: PondService) {}
@@ -77,6 +79,44 @@ export class PondListComponent implements OnInit {
     } else {
       alert("Please enter both Pond ID and Pond Name.");
     }
+  }
+
+  editPond(pond: Pond): void {
+    this.selectedPond = { ...pond }; // Copy the selected pond
+    this.showEditPondForm = true;
+  }
+
+  updatePond(): void {
+    if (this.selectedPond) {
+      console.log('Updating pond:', this.selectedPond); // Debugging log to verify the location field
+      this.pondService.updatePond(this.selectedPond).subscribe(
+        (updatedPond) => {
+          const index = this.ponds.findIndex(p => p.id === updatedPond.id);
+          if (index !== -1) {
+            this.ponds[index] = updatedPond;
+          }
+          this.showEditPondForm = false;
+          alert('Pond updated successfully!');
+        },
+        (error) => {
+          console.error('Error updating pond:', error);
+          alert('Failed to update pond. Please try again.');
+        }
+      );
+    }
+  }
+
+  deletePond(pondId: string): void {
+    if (confirm("Are you sure you want to delete this pond?")) {
+      this.pondService.deletePond(pondId).subscribe(() => {
+        this.ponds = this.ponds.filter(p => p.id !== pondId);
+        this.showEditPondForm = false;
+      });
+    }
+  }
+
+  cancelEdit(): void {
+    this.showEditPondForm = false;
   }
 
   getSensorIcon(type: string): string {
