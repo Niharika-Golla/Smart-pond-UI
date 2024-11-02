@@ -1,0 +1,287 @@
+/* Overall Container */
+.container-fluid {
+  padding: 20px;
+}
+
+/* Flexbox container for cards */
+.card-container {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* Pond and Add Pond Cards Styling */
+.pond-card, .add-pond-card {
+  width: 220px; /* Keep the same width */
+  min-height: 350px; /* Increased height for a longer card */
+  border: 1px solid #cfe8ff;
+  border-radius: 10px;
+  background-color: #f9fafa; /* Aqua background color for pond cards */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0; /* Remove padding around the entire card */
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.pond-card:hover, .add-pond-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Image Styling for Pond Card */
+.pond-card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Card Content Area */
+.card-body {
+  padding: 16px;
+  text-align: center;
+  width: 100%;
+  background-color: #ffffff; /* White background for content */
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Pond Card Titles */
+.card-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+/* Add Pond Button Card Styling */
+.add-pond-card {
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccd5ff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-pond-card:hover {
+  background-color: #fcfcfe;
+}
+
+.plus-icon {
+  font-size: 2.5rem;
+  color: #4a90e2;
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Sensor Container for Sensor Cards */
+.sensor-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+/* Sensor Card Styling with Aqua Background */
+.sensor-card {
+  width: 220px;
+  min-height: 200px;
+  border: 1px solid #cfe8ff;
+  border-radius: 10px;
+  background-color: #e0f7fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sensor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon Styling for Each Sensor */
+.sensor-icon {
+  font-size: 2rem;
+  color: #007bff;
+  margin-bottom: 8px;
+}
+
+/* Sensor Information */
+.sensor-info {
+  text-align: center;
+}
+
+.sensor-type {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  margin: 8px 0;
+}
+
+.sensor-value {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Back Button with Arrow Icon */
+.back-button {
+  font-size: 1rem;
+  color: #333;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.back-button:hover {
+  color: #007bff;
+}
+
+/* Overlay for Centered Form */
+.add-pond-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Formal styling for Add Pond Form Container */
+.add-pond-form-container {
+  max-width: 500px;
+  padding: 40px;
+  border: 1px solid #d3d3d3;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Animation for Form Fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Form Header */
+.add-pond-form-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Form Field Styling */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-control {
+  padding: 12px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 6px rgba(74, 144, 226, 0.3);
+}
+
+/* Button styling within the form */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+  padding: 10px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: #4a90e2;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #357abf;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: #0586f8;
+  color: #fff;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #0f56f0;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #b02a37;
+  transform: translateY(-2px);
+}
