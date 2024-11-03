@@ -21,7 +21,7 @@ export class PondService {
   }
 
   addPond(pond: Pond): Observable<Pond> {
-    return this.http.post<Pond>(this.baseUrl, pond);
+    return this.http.post<Pond>(`${this.baseUrl}/add`, pond); // Ensure the endpoint matches the backend
   }
 
   updatePond(pond: Pond): Observable<Pond> {
