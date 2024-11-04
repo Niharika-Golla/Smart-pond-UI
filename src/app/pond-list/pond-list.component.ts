@@ -3,6 +3,7 @@ import { PondService } from '../services/pond.service';
 import { Pond, Sensor } from '../models/pond.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import moment from 'moment-timezone';
 
 @Component({
   selector: 'app-pond-list',
@@ -10,7 +11,7 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './pond-list.component.html',
   styleUrls: ['./pond-list.component.css'],
-  providers: [DatePipe] // Add DatePipe as a provider here
+  providers: [DatePipe]
 })
 export class PondListComponent implements OnInit {
   ponds: Pond[] = [];
@@ -30,35 +31,45 @@ export class PondListComponent implements OnInit {
   }
 
   loadPonds(): void {
-    this.pondService.getAllPonds().subscribe((data) => {
-      this.ponds = data;
-    });
+    this.pondService.getAllPonds().subscribe(
+      (data) => {
+        this.ponds = data;
+      },
+      (error) => {
+        console.error('Error loading ponds:', error);
+        alert('Failed to load ponds. Please try again later.');
+      }
+    );
   }
 
   viewSensors(pondId: string): void {
     this.selectedPondId = pondId;
     this.sensorView = true; // Switch to sensor view
-    this.pondService.getSensorsByPond(pondId).subscribe((data) => {
-      this.sensors = data;
-      // Extract the most recent reading for each sensor
-      this.sensors.forEach(sensor => {
-        sensor.mostRecentReading = sensor.readings.length > 0
-          ? sensor.readings.reduce((latest, current) => new Date(latest.timestamp) > new Date(current.timestamp) ? latest : current)
-          : undefined;
-        // Convert timestamps to local time zone for display
-        if (sensor.mostRecentReading) {
-          sensor.mostRecentReading.timestamp = this.formatTimestampToLocalTime(sensor.mostRecentReading.timestamp);
-        }
-      });
-    });
+    this.pondService.getSensorsByPond(pondId).subscribe(
+      (data) => {
+        this.sensors = data;
+        // Extract the most recent reading for each sensor
+        this.sensors.forEach(sensor => {
+          sensor.mostRecentReading = sensor.readings.length > 0
+            ? sensor.readings.reduce((latest, current) => new Date(latest.timestamp) > new Date(current.timestamp) ? latest : current)
+            : undefined;
+          // Convert timestamps to local time zone for display
+          if (sensor.mostRecentReading) {
+            sensor.mostRecentReading.timestamp = this.formatTimestampToLocalTime(sensor.mostRecentReading.timestamp);
+          }
+        });
+      },
+      (error) => {
+        console.error('Error fetching sensors:', error);
+        alert('Failed to load sensor data. Please try again later.');
+      }
+    );
   }
 
   formatTimestampToLocalTime(utcTimestamp: string): string {
     const utcDate = new Date(utcTimestamp);
-    // Using DatePipe to format the date to IST with explicit time zone offset
     return this.datePipe.transform(utcDate, 'dd-MM-yyyy HH:mm:ss', 'Asia/Kolkata') || '';
   }
-  
 
   backToPonds(): void {
     this.sensorView = false; // Switch back to pond list view
@@ -82,20 +93,30 @@ export class PondListComponent implements OnInit {
 
   addPond(): void {
     if (this.newPond.id && this.newPond.name) {
+      const currentTimeIST = moment().tz('Asia/Kolkata').format('YYYY-MM-DDTHH:mm:ss');
+
       const defaultSensors: Sensor[] = [
-        { type: 'pH Sensor', readings: [{ value: '7.0', timestamp: new Date().toISOString() }] },
-        { type: 'Temperature Sensor', readings: [{ value: '25°C', timestamp: new Date().toISOString() }] },
-        { type: 'Rain Sensor', readings: [{ value: 'No Rain', timestamp: new Date().toISOString() }] },
-        { type: 'Oxygen Sensor', readings: [{ value: '8 mg/L', timestamp: new Date().toISOString() }] },
-        { type: 'Water Level Sensor', readings: [{ value: 'Normal', timestamp: new Date().toISOString() }] }
+        { type: 'pH Sensor', readings: [{ value: '7.0', timestamp: currentTimeIST }] },
+        { type: 'Temperature Sensor', readings: [{ value: '25°C', timestamp: currentTimeIST }] },
+        { type: 'Rain Sensor', readings: [{ value: 'No Rain', timestamp: currentTimeIST }] },
+        { type: 'Oxygen Sensor', readings: [{ value: '8 mg/L', timestamp: currentTimeIST }] },
+        { type: 'Water Level Sensor', readings: [{ value: 'Normal', timestamp: currentTimeIST }] }
       ];
       this.newPond.sensors = [...this.newPond.sensors, ...defaultSensors];
-      this.pondService.addPond(this.newPond).subscribe((pond) => {
-        this.ponds.push(pond);
-        this.toggleAddPondForm();
-      });
+      
+      this.pondService.addPond(this.newPond).subscribe(
+        (pond) => {
+          this.ponds.push(pond);
+          this.toggleAddPondForm();
+          alert('Pond added successfully!');
+        },
+        (error) => {
+          console.error('Error adding pond:', error);
+          alert('Failed to add pond. Please check your input and try again.');
+        }
+      );
     } else {
-      alert("Please enter both Pond ID and Pond Name.");
+      alert('Please enter both Pond ID and Pond Name.');
     }
   }
 
@@ -106,7 +127,7 @@ export class PondListComponent implements OnInit {
 
   updatePond(): void {
     if (this.selectedPond) {
-      console.log('Updating pond:', this.selectedPond); // Debugging log to verify the location field
+      console.log('Updating pond:', this.selectedPond);
       this.pondService.updatePond(this.selectedPond).subscribe(
         (updatedPond) => {
           const index = this.ponds.findIndex(p => p.id === updatedPond.id);
@@ -125,11 +146,18 @@ export class PondListComponent implements OnInit {
   }
 
   deletePond(pondId: string): void {
-    if (confirm("Are you sure you want to delete this pond?")) {
-      this.pondService.deletePond(pondId).subscribe(() => {
-        this.ponds = this.ponds.filter(p => p.id !== pondId);
-        this.showEditPondForm = false;
-      });
+    if (confirm('Are you sure you want to delete this pond?')) {
+      this.pondService.deletePond(pondId).subscribe(
+        () => {
+          this.ponds = this.ponds.filter(p => p.id !== pondId);
+          this.showEditPondForm = false;
+          alert('Pond deleted successfully!');
+        },
+        (error) => {
+          console.error('Error deleting pond:', error);
+          alert('Failed to delete pond. Please try again.');
+        }
+      );
     }
   }
 
