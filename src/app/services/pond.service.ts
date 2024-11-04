@@ -5,8 +5,9 @@ import { Observable } from 'rxjs';
 import { Pond } from '../models/pond.model';
 import { Sensor } from '../models/sensor.model';
 
+
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root' // This makes it available throughout the app
 })
 export class PondService {
   private baseUrl = 'http://localhost:8080/admin/ponds';
