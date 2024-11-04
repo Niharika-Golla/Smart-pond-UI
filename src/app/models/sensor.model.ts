@@ -1,3 +1,4 @@
+//reading.model.ts
 import { Reading } from './reading.model';
 
 export interface Sensor {

@@ -1,3 +1,4 @@
+// pond-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { PondService } from '../services/pond.service';
 import { Pond, Sensor } from '../models/pond.model';
