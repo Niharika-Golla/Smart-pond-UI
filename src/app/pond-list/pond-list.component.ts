@@ -24,6 +24,7 @@ export class PondListComponent implements OnInit {
   showEditPondForm: boolean = false;
   selectedPond: Pond = { id: '', name: '', location: '', sensors: [] };
   sensorView: boolean = false; // Track whether we are in sensor view
+  errorMessage: string = ''; // Error message variable
 
   constructor(private pondService: PondService, private datePipe: DatePipe) {}
 
@@ -82,6 +83,7 @@ export class PondListComponent implements OnInit {
     if (!this.showAddPondForm) {
       this.newPond = { id: '', name: '', location: '', sensors: [] };
       this.newSensor = { type: '', readings: [] };
+      this.errorMessage = ''; // Clear error message when toggling the form
     }
   }
 
@@ -92,34 +94,45 @@ export class PondListComponent implements OnInit {
     }
   }
 
-  addPond(): void {
+addPond(): void {
     if (this.newPond.id && this.newPond.name) {
-      const currentTimeIST = moment().tz('Asia/Kolkata').format('YYYY-MM-DDTHH:mm:ss');
+        const currentTimeIST = moment().tz('Asia/Kolkata').format('YYYY-MM-DDTHH:mm:ss');
 
-      const defaultSensors: Sensor[] = [
-        { type: 'pH Sensor', readings: [{ value: '7.0', timestamp: currentTimeIST }] },
-        { type: 'Temperature Sensor', readings: [{ value: '25°C', timestamp: currentTimeIST }] },
-        { type: 'Rain Sensor', readings: [{ value: 'No Rain', timestamp: currentTimeIST }] },
-        { type: 'Oxygen Sensor', readings: [{ value: '8 mg/L', timestamp: currentTimeIST }] },
-        { type: 'Water Level Sensor', readings: [{ value: 'Normal', timestamp: currentTimeIST }] }
-      ];
-      this.newPond.sensors = [...this.newPond.sensors, ...defaultSensors];
-      
-      this.pondService.addPond(this.newPond).subscribe(
-        (pond) => {
-          this.ponds.push(pond);
-          this.toggleAddPondForm();
-          alert('Pond added successfully!');
-        },
-        (error) => {
-          console.error('Error adding pond:', error);
-          alert('Failed to add pond. Please check your input and try again.');
-        }
-      );
+        const defaultSensors: Sensor[] = [
+            { type: 'pH Sensor', readings: [{ value: '7.0', timestamp: currentTimeIST }] },
+            { type: 'Temperature Sensor', readings: [{ value: '25°C', timestamp: currentTimeIST }] },
+            { type: 'Rain Sensor', readings: [{ value: 'No Rain', timestamp: currentTimeIST }] },
+            { type: 'Oxygen Sensor', readings: [{ value: '8 mg/L', timestamp: currentTimeIST }] },
+            { type: 'Water Level Sensor', readings: [{ value: 'Normal', timestamp: currentTimeIST }] }
+        ];
+        this.newPond.sensors = [...this.newPond.sensors, ...defaultSensors];
+        
+        // Call the pond service to add the new pond and handle success and error
+        this.pondService.addPond(this.newPond).subscribe(
+            (pond) => {
+                this.ponds.push(pond);
+                this.toggleAddPondForm();
+                alert('Pond added successfully!');
+            },
+            (error) => {
+                // Error callback with detailed logging and user feedback
+                console.error('Error adding pond:', error);
+                console.log('Full error object:', error);
+                if (error.status === 409) {
+                    // Display specific error message if ID conflict occurs
+                    this.errorMessage = error.error || 'A pond with the same ID already exists. Please use a unique ID.';
+                } else {
+                    // Display a generic error message for other issues
+                    this.errorMessage = 'Failed to add pond. Please check your input and try again.';
+                }
+            }
+        );
     } else {
-      alert('Please enter both Pond ID and Pond Name.');
+        alert('Please enter both Pond ID and Pond Name.');
     }
-  }
+}
+
+
 
   editPond(pond: Pond): void {
     this.selectedPond = { ...pond }; // Copy the selected pond

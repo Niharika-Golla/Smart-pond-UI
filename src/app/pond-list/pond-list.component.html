@@ -60,45 +60,52 @@
     </div>
 
     <!-- Centered Form, visible only when adding a new pond -->
-    <div *ngIf="showAddPondForm" class="add-pond-form-overlay">
-      <div class="add-pond-form-container">
-        <h3 class="add-pond-form-title">Add New Pond</h3>
-        <div class="form-group">
-          <label for="pondId">Pond ID</label>
-          <input
-            type="text"
-            id="pondId"
-            class="form-control"
-            [(ngModel)]="newPond.id"
-            placeholder="Enter pond ID"
-          />
-        </div>
-        <div class="form-group">
-          <label for="pondName">Pond Name</label>
-          <input
-            type="text"
-            id="pondName"
-            class="form-control"
-            [(ngModel)]="newPond.name"
-            placeholder="Enter pond name"
-          />
-        </div>
-        <div class="form-group">
-          <label for="pondLocation">Pond Location</label>
-          <input
-            type="text"
-            id="pondLocation"
-            class="form-control"
-            [(ngModel)]="newPond.location"
-            placeholder="Enter pond location"
-          />
-        </div>
-        <div class="button-group">
-          <button class="btn btn-primary" (click)="addPond()">Save Pond</button>
-          <button class="btn btn-danger" (click)="toggleAddPondForm()">Cancel</button>
-        </div>
-      </div>
+ <!-- Centered Form, visible only when adding a new pond -->
+<!-- Centered Form, visible only when adding a new pond -->
+<div *ngIf="showAddPondForm" class="add-pond-form-overlay">
+  <div class="add-pond-form-container">
+    <h3 class="add-pond-form-title">Add New Pond</h3>
+    <div class="form-group">
+      <label for="pondId">Pond ID</label>
+      <input
+        type="text"
+        id="pondId"
+        class="form-control"
+        [(ngModel)]="newPond.id"
+        placeholder="Enter pond ID"
+      />
     </div>
+    <div class="form-group">
+      <label for="pondName">Pond Name</label>
+      <input
+        type="text"
+        id="pondName"
+        class="form-control"
+        [(ngModel)]="newPond.name"
+        placeholder="Enter pond name"
+      />
+    </div>
+    <div class="form-group">
+      <label for="pondLocation">Pond Location</label>
+      <input
+        type="text"
+        id="pondLocation"
+        class="form-control"
+        [(ngModel)]="newPond.location"
+        placeholder="Enter pond location"
+      />
+    </div>
+    <div class="button-group">
+      <button class="btn btn-primary" (click)="addPond()">Save Pond</button>
+      <button class="btn btn-danger" (click)="toggleAddPondForm()">Cancel</button>
+    </div>
+
+    <!-- Error Message Below the Form -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </div>
+</div>
+
+
 
     <!-- Edit Pond Form, similar to Add Pond Form -->
     <div *ngIf="showEditPondForm" class="add-pond-form-overlay">

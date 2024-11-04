@@ -55,6 +55,8 @@
   border-bottom-right-radius: 10px;
 }
 
+
+
 /* Pond Card Titles */
 .card-title {
   font-weight: 700;
@@ -88,6 +90,12 @@
   margin: 0;
   font-weight: bold;
 }
+.alert-danger {
+  color: red;
+  font-weight: bold;
+}
+
+
 
 /* Sensor Container for Sensor Cards */
 .sensor-container {
